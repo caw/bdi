@@ -24,13 +24,12 @@
   (format  "~a/0" term)))
 
 (define (bdi-assert event)
-  (let* ((term (event-form event))
+  (let* ((term (event-term event))
          (s (sig term)))
 
     (display s)
     (set-add! *beliefs* )))
 
-(define (bdi-assert event) (printf "Asserting ~a in env: ~a\n" event (event-env event)))
 (define (bdi-retract event) (printf "Retracting ~a in env: ~a\n" (event-env event)))
 (define (bdi-query event) (printf "Query ~a in env: ~a\n" event (event-env event)))
 (define (bdi-achieve event) (printf "Achieve ~a in env: ~a\n"  event (event-env event)))
@@ -47,4 +46,7 @@
   (define event-1 (event 'assert '(foo-bar) 'env))
   (handle-event event-1))
 
-(test)
+(define foo (read))
+(display "-------------")
+(display foo)
+(display "-------------")
