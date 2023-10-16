@@ -43,8 +43,22 @@
       [_ (printf "WTF: ~a\n" event)]))
 
 (define (test)
-  (define event-1 (event 'assert '(foo-bar) 'env))
-  (handle-event event-1))
+  (let/ec return
+    (let loop ()
+      (let ((input (read)))
+        (printf "Read: ~a\n" input)
+        (when (eq? input 'quit)
+          (return "Quit received")))
+      (loop))))
+
+
+
+
+
+
+
+(define event-1 (event 'assert '(foo-bar) 'env))
+(handle-event event-1))
 
 (define foo (read))
 (display "-------------")
