@@ -6,6 +6,21 @@
 ;;; - query
 ;;; - achieve
 
+;; just a list to start with-asserts
+;; what it eventually becomes needs thought...
+
+(define *beliefs* '())
+
+(define (ground? belief) #t)
+
+(define (print-beliefs)
+  (format "Beliefs: ~a" *beliefs*))
+
+(define (add-belief belief)
+  (unless (ground? belief)
+    (error "Assertion FAIL. Belief: ~a not ground" belief))
+  (set! *beliefs* (cons belief *beliefs*)))
+
 (struct event (action term env) #:transparent #:mutable)
 
 (define-syntax make-event
@@ -15,8 +30,6 @@
 
 (define ev-1 (make-event achieve (factorial 10 $r) ()))
 
-;; this needs to be a mutable HASH or something for retrieval speed
-(define *beliefs* (make-hash))
 
 (define (sig term)
   (if (pair? term)
@@ -26,9 +39,7 @@
 (define (bdi-assert event)
   (let* ((term (event-term event))
          (s (sig term)))
-
-    (display s)
-    (set-add! *beliefs* )))
+    (add-belief term)))
 
 (define (bdi-retract event) (printf "Retracting ~a in env: ~a\n" (event-env event)))
 (define (bdi-query event) (printf "Query ~a in env: ~a\n" event (event-env event)))
@@ -41,7 +52,9 @@
       ['query (bdi-query event)]
       ['achieve (bdi-achieve event)]
       [_ (printf "WTF: ~a\n" event)]))
-
+;;
+;; REPL
+;; 
 (define (test)
   (let/ec return
     (let loop ()
@@ -51,16 +64,6 @@
           (return "Quit received")))
       (loop))))
 
-
-
-
-
-
-
 (define event-1 (event 'assert '(foo-bar) 'env))
-(handle-event event-1))
+(handle-event event-1)
 
-(define foo (read))
-(display "-------------")
-(display foo)
-(display "-------------")
