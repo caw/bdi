@@ -6,7 +6,7 @@
 ;;; - query
 ;;; - achieve
 
-;; just a list to start with-asserts
+;; just a list to start with
 ;; what it eventually becomes needs thought...
 
 (define *beliefs* '())
@@ -23,12 +23,8 @@
 
 (struct event (action term env) #:transparent #:mutable)
 
-(define-syntax make-event
-  (syntax-rules ()
-  ((_ action term env)
-   (event 'action 'term 'env))))
-
-(define ev-1 (make-event achieve (factorial 10 $r) ()))
+(define (make-event action term env)
+  (event action term env))
 
 
 (define (sig term)
@@ -60,8 +56,13 @@
     (let loop ()
       (let ((input (read)))
         (printf "Read: ~a\n" input)
-        (when (eq? input 'quit)
-          (return "Quit received")))
+        (if (eq? input 'quit)
+            (return "Quit received")
+            (let ((a (car input))
+                  (t (cadr  input))
+                  (e (caddr input)))
+              (let ((ev (make-event a t e)))
+                (printf "Action: ~a Term: ~a Env: ~a Event: ~a" (event-action ev) (event-term ev) (event-env ev) ev)))))
       (loop))))
 
 (define event-1 (event 'assert '(foo-bar) 'env))
